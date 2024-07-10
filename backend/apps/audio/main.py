@@ -80,12 +80,23 @@ class OpenAIConfigUpdateForm(BaseModel):
     model: str
     speaker: str
 
-
 @app.get("/config")
-async def get_openai_config(user=Depends(get_admin_user)):
+async def get_openai_config(user=Depends(get_verified_user)):
+    ENABLED = False
+    if app.state.config.OPENAI_API_BASE_URL != '':
+        ENABLED = True
+
+    if user.role == "admin":
+        return {
+            "ENABLED": ENABLED,
+            "OPENAI_API_BASE_URL": app.state.config.OPENAI_API_BASE_URL,
+            "OPENAI_API_KEY": app.state.config.OPENAI_API_KEY,
+            "OPENAI_API_MODEL": app.state.config.OPENAI_API_MODEL,
+            "OPENAI_API_VOICE": app.state.config.OPENAI_API_VOICE,
+        }
+
     return {
-        "OPENAI_API_BASE_URL": app.state.config.OPENAI_API_BASE_URL,
-        "OPENAI_API_KEY": app.state.config.OPENAI_API_KEY,
+        "ENABLED": ENABLED,
         "OPENAI_API_MODEL": app.state.config.OPENAI_API_MODEL,
         "OPENAI_API_VOICE": app.state.config.OPENAI_API_VOICE,
     }
