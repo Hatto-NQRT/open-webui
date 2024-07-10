@@ -794,25 +794,32 @@ IMAGE_GENERATION_MODEL = PersistentConfig(
 # Audio
 ####################################
 
+AUDIO_OPENAI_API_BASE_URL = yaml_config.get("openai", {}).get("tts", {}).get("url", "")
 AUDIO_OPENAI_API_BASE_URL = PersistentConfig(
     "AUDIO_OPENAI_API_BASE_URL",
     "audio.openai.api_base_url",
-    os.getenv("AUDIO_OPENAI_API_BASE_URL", OPENAI_API_BASE_URL),
+    AUDIO_OPENAI_API_BASE_URL
 )
+
+AUDIO_OPENAI_API_KEY = yaml_config.get("openai", {}).get("tts", {}).get("key", "")
 AUDIO_OPENAI_API_KEY = PersistentConfig(
     "AUDIO_OPENAI_API_KEY",
     "audio.openai.api_key",
-    os.getenv("AUDIO_OPENAI_API_KEY", OPENAI_API_KEY),
+    AUDIO_OPENAI_API_KEY
 )
+
+AUDIO_OPENAI_API_MODEL = yaml_config.get("openai", {}).get("tts", {}).get("default_params", {}).get("model", "tts-1")
 AUDIO_OPENAI_API_MODEL = PersistentConfig(
     "AUDIO_OPENAI_API_MODEL",
     "audio.openai.api_model",
-    os.getenv("AUDIO_OPENAI_API_MODEL", "tts-1"),
+    AUDIO_OPENAI_API_MODEL
 )
+
+AUDIO_OPENAI_API_VOICE = yaml_config.get("openai", {}).get("tts", {}).get("default_params", {}).get("voice", "alloy")
 AUDIO_OPENAI_API_VOICE = PersistentConfig(
     "AUDIO_OPENAI_API_VOICE",
     "audio.openai.api_voice",
-    os.getenv("AUDIO_OPENAI_API_VOICE", "alloy"),
+    AUDIO_OPENAI_API_VOICE
 )
 
 ####################################
