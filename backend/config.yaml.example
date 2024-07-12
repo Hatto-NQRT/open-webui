@@ -18,6 +18,12 @@ openai:
         top_k: 40
         repetition_penalty: 1.05
         num_predict: 1024
+  tts:
+    url: http://118.69.81.93:8601/v1
+    key: ABC
+    default_params:
+      model: saas_edge_southern_male
+      voice: vu_long
 chat_type_model_map:
   chat: 0
   chat_law: 0
