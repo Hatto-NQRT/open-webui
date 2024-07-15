@@ -705,7 +705,8 @@
 		if ($chatType.startsWith('translate')) {
 			prompts = await chunkText(selectedModels[0], $chatType, userPrompt, 100)
 		}
-
+		
+		let trailingChar = '';
 		for (let subPrompt of prompts) {
 			try {
 				const {apiMessages, citations} = await createChatCompletionApiMessages($chatType, sessionConfig.system, subPrompt, $selectedChatEmbeddingIndex, messages, $promptOptions)
@@ -747,6 +748,7 @@
 				if (res && res.ok && res.body) {
 					const textStream = await createOpenAITextStream(res.body, $settings.splitLargeChunks);
 
+					let atChunkBeginning = true	
 					for await (const update of textStream) {
 						const { value, done, citations, error } = update;
 						if (error) {
@@ -794,10 +796,19 @@
 						if (responseMessage.content == '' && value == '\n') {
 							continue;
 						} else {
-							responseMessage.content += value;
+							if (atChunkBeginning) {
+								responseMessage.content += trailingChar + value;
+								atChunkBeginning = false;
+								trailingChar = '';
+							}
+							else {
+								responseMessage.content += value;
+							}
+							// responseMessage.content += value;
 							messages = messages;
 						}
 					}
+					trailingChar = subPrompt.charAt(subPrompt.length - 1);
 				} else {
 					await handleOpenAIError(null, res, model, responseMessage);
 				}
