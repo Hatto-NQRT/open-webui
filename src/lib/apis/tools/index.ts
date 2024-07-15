@@ -1,6 +1,6 @@
 import {HATTO_LLM_API_BASE_URL} from '$lib/constants';
 
-export const chunkText = async (model: string, content: string, extra_tokens: number = 0) => {
+export const chunkText = async (model: string, translate_type:string, content: string, extra_tokens: number = 0) => {
 	let error = null;
 
 	const res = await fetch(`${HATTO_LLM_API_BASE_URL}/tool/chunk-text`, {
@@ -11,7 +11,7 @@ export const chunkText = async (model: string, content: string, extra_tokens: nu
 			authorization: `Bearer ${localStorage.token}`
 		},
 		body: JSON.stringify({
-			model, content, extra_tokens
+			model, translate_type, content, extra_tokens
 		})
 	})
 		.then(async (res) => {
