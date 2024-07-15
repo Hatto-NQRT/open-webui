@@ -694,7 +694,7 @@
 
 		let prompts = [userPrompt]
 		if ($chatType.startsWith('translate')) {
-			prompts = await chunkText(selectedModels[0], userPrompt, 100)
+			prompts = await chunkText(selectedModels[0], $chatType, userPrompt, 100)
 		}
 
 		for (let subPrompt of prompts) {
