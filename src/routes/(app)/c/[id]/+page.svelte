@@ -271,7 +271,8 @@
 				childrenIds: [],
 				role: 'user',
 				user: _user ?? undefined,
-				content: getUserPrompt($chatType, userPrompt, $promptOptions),
+				// content: getUserPrompt($chatType, userPrompt, $promptOptions),
+				content: userPrompt,
 				files: files.length > 0 ? files : undefined,
 				timestamp: Math.floor(Date.now() / 1000), // Unix epoch
 				models: selectedModels
