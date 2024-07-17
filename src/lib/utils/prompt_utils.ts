@@ -72,16 +72,18 @@ Hãy tạo 1 chuỗi trò chuyện qua lại giữa giáo viên phân tích vấ
       return `${content}\n
 Dựa vào thông tin bài viết, hãy tạo tối thiểu 10 hội thoại qua lại giữa giáo viên luật sư (Human) phân tích các vấn đề, lưu ý các nhân chứng, tang chứng, vật chứng  trong vụ án dưới đây, bao gồm các câu hỏi quan trọng liên quan đến các điều luật hay thông tin có thể không có trong bài viết này để đi tìm ở nơi khác sau, tạo thành các khái niệm cơ bản và hỏi từng bước suy luận nhỏ và sinh viên luật (Assistant) trả lời kèm giải thích, mục tiêu giúp sinh viên luật thông minh (Assistant) suy nghĩ từng bước một để tìm ra được các bước cần điều tra thêm hay dự đoán quyết định của Toà án cho vụ án.
 `
+//     case 'faq_case_2':
+//     case 'long_faq_case_2':
+//       return `${content}\n
+// Hãy tạo tối thiểu 10 hội thoại qua lại giữa giáo viên phân tích vấn đề thành các khái niệm cơ bản và hỏi từng bước suy luận nhỏ và học sinh trả lời kèm giải thích, giúp một học sinh thông minh suy nghĩ từng bước một để tìm ra được đáp án trong bài trên. Trả về định dạng sau:
+// -giáo viên hỏi: "..."
+// -học sinh trả lời kèm giải thích: "..."
+// ...
+// `
+    // case 'faq_case_3':
+    // case 'long_faq_case_3':
     case 'faq_case_2':
     case 'long_faq_case_2':
-      return `${content}\n
-Hãy tạo tối thiểu 10 hội thoại qua lại giữa giáo viên phân tích vấn đề thành các khái niệm cơ bản và hỏi từng bước suy luận nhỏ và học sinh trả lời kèm giải thích, giúp một học sinh thông minh suy nghĩ từng bước một để tìm ra được đáp án trong bài trên. Trả về định dạng sau:
--giáo viên hỏi: "..."
--học sinh trả lời kèm giải thích: "..."
-...
-`
-    case 'faq_case_3':
-    case 'long_faq_case_3':
       return `${content}\n
 Hãy tạo tối thiểu 10 hội thoại qua lại giữa giáo viên luật sư phân tích các vấn đề, lưu ý các nhân chứng, tang chứng, vật chứng  trong vụ án dưới đây, bao gồm các câu hỏi quan trọng liên quan đến các điều luật hay thông tin có thể không có trong bài viết này để đi tìm ở nơi khác sau, tạo thành các khái niệm cơ bản và hỏi từng bước suy luận nhỏ và sinh viên luật trả lời kèm giải thích, mục tiêu giúp một sinh viên luật thông minh suy nghĩ từng bước một để tìm ra được các bước cần điều tra thêm hay dự đoán quyết định của Toà án cho vụ án. Tạo thêm ít nhất 2 câu hỏi liên quan vụ án mà sinh viên phản hồi “KHÔNG THỂ TRẢ LỜI” vì không có thông tin trong bài viết hoặc cần làm rõ thêm hoặc tra cứu các điều khoản luật khác và sinh viên phải nêu được phương án để tìm ra câu trả lời. Trả về định dạng sau:
 -giáo viên hỏi: "..."

@@ -261,10 +261,16 @@
 				</a>
 			</div> -->
 			<div class="flex rounded-md py-2.5 px-3.5 w-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-				<a
+				<!-- <a
 						href="/?type=faq_case_3"
 						on:click={async () => {
 						await handleCreateNewChat('faq_case_3')
+					}}
+				> -->
+				<a
+						href="/?type=faq_case_2"
+						on:click={async () => {
+						await handleCreateNewChat('faq_case_2')
 					}}
 				>
 					<div class="flex self-center">
@@ -411,10 +417,16 @@
 				</a>
 			</div> -->
 			<div class="flex rounded-md py-2.5 px-3.5 w-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-				<a
+				<!-- <a
 						href="/?type=long_faq_case_3"
 						on:click={async () => {
 						await handleCreateNewChat('long_faq_case_3')
+					}}
+				> -->
+				<a
+						href="/?type=long_faq_case_2"
+						on:click={async () => {
+						await handleCreateNewChat('long_faq_case_2')
 					}}
 				>
 					<div class="flex self-center">
