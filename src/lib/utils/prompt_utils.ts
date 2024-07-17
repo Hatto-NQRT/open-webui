@@ -252,13 +252,25 @@ export const getDefaultParams = (chatType: string) => {
         repetition_penalty: 1.08,
       }
     case 'translate':
-    case 'translate_coding':
-    case 'translate_ancient':
       return {
         temperature: 0.0,
         top_p: 0.95,
         top_k: 20,
         repetition_penalty: 0.15,
+      }
+    case 'translate_coding':
+      return {
+        temperature: 0.0,
+        top_p: 0.95,
+        top_k: 20,
+        repetition_penalty: 0.0,
+      }
+    case 'translate_ancient':
+      return {
+        temperature: 0.0,
+        top_p: 0.95,
+        top_k: 20,
+        repetition_penalty: 0.35,
       }
     case 'summary':
     case 'summary_emphasis':
