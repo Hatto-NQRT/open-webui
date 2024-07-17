@@ -38,6 +38,7 @@ export const documents = writable([
 ]);
 
 export const settings: Writable<Settings> = writable({});
+export const audioSettings: Writable<AudioSettings> = writable({});
 
 export const showSidebar = writable(false);
 export const showFilesListSidebar = writable(false);

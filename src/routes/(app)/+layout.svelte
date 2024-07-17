@@ -11,6 +11,7 @@
 	import { getOllamaVersion } from '$lib/apis/ollama';
 	import { getModelfiles } from '$lib/apis/modelfiles';
 	import { getPrompts } from '$lib/apis/prompts';
+	import { getAudioConfig } from '$lib/apis/audio';
 
 	import { getDocs } from '$lib/apis/documents';
 	import { getAllChatTags } from '$lib/apis/chats';
@@ -19,6 +20,7 @@
 		user,
 		showSettings,
 		settings,
+		audioSettings,
 		models,
 		modelfiles,
 		prompts,
@@ -91,7 +93,31 @@
 			}
 
 			await models.set(await getModels());
+
+			// ------ Old Settings from original source code ------
 			await settings.set(JSON.parse(localStorage.getItem('settings') ?? '{}'));
+			// ---------------------------------------------------
+
+			// ---------- CONFIG DEFAULT OPENAI TTS SETTINGS ---------------
+			if ($settings?.audio === undefined) {
+				await audioSettings.set(await getAudioConfig(localStorage.token));
+				if ($audioSettings?.ENABLED) {
+					let TTSEngine = 'openai';
+					let speaker = $audioSettings?.OPENAI_API_VOICE;
+					let model = $audioSettings?.OPENAI_API_MODEL;
+					let audioConfig = {
+						audio: {
+							STTEngine: undefined,
+							TTSEngine: TTSEngine !== '' ? TTSEngine : undefined,
+							speaker: speaker !== '' ? speaker : undefined,
+							model: model !== '' ? model : undefined
+						}
+					};
+					await settings.set({ ...$settings, ...audioConfig });
+					localStorage.setItem('settings', JSON.stringify($settings));
+				}
+			}
+			// ---------------------------------------------------------------
 
 			await modelfiles.set(await getModelfiles(localStorage.token));
 			await prompts.set(await getPrompts(localStorage.token));
