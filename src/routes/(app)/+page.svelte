@@ -689,7 +689,6 @@
 
 	const sendPromptOpenAI = async (model, userPrompt, responseMessageId, _chatId) => {
 		const responseMessage = history.messages[responseMessageId];
-
 		const docs = messages
 			.filter((message) => message?.files ?? null)
 			.map((message) =>
