@@ -1,8 +1,12 @@
+import traceback
+
 from pydantic import BaseModel
 from peewee import *
 from playhouse.shortcuts import model_to_dict
 from typing import List, Union, Optional
 import time
+
+from retry import retry
 from utils.misc import get_gravatar_url
 
 from apps.web.internal.db import DB
@@ -92,12 +96,15 @@ class UsersTable:
         else:
             return None
 
+    @retry(exceptions=Exception, tries=3, backoff=1)
     def get_user_by_id(self, id: str) -> Optional[UserModel]:
         try:
             user = User.get(User.id == id)
             return UserModel(**model_to_dict(user))
-        except:
-            return None
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
+            raise e
 
     def get_user_by_api_key(self, api_key: str) -> Optional[UserModel]:
         try:
