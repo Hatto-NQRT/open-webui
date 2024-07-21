@@ -1,12 +1,15 @@
 from peewee import *
 from peewee_migrate import Router
 from playhouse.db_url import connect
+from wrappers import PeeweeConnectionState, register_peewee_databases
 from config import SRC_LOG_LEVELS, DATA_DIR, DATABASE_URL
 import os
 import logging
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["DB"])
+
+register_peewee_databases()
 
 # Check if the file exists
 if os.path.exists(f"{DATA_DIR}/ollama.db"):
@@ -17,6 +20,7 @@ else:
     pass
 
 DB = connect(DATABASE_URL)
+DB._state = PeeweeConnectionState()
 log.info(f"Connected to a {DB.__class__.__name__} database.")
 router = Router(DB, migrate_dir="apps/web/internal/migrations", logger=log)
 router.run()
