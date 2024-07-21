@@ -1,7 +1,7 @@
 from peewee import *
 from peewee_migrate import Router
 from playhouse.db_url import connect
-from wrappers import PeeweeConnectionState, register_peewee_databases
+from apps.web.internal.wrappers import PeeweeConnectionState, register_peewee_databases
 from config import SRC_LOG_LEVELS, DATA_DIR, DATABASE_URL
 import os
 import logging
