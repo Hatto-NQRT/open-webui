@@ -499,5 +499,7 @@
 	"You're a helpful assistant.": "",
 	"You're now logged in.": "",
 	"Youtube": "",
-	"Youtube Loader Settings": ""
+	"Youtube Loader Settings": "",
+	"switch_to_long_model_confirm": "Your message is too long and may cause errors. Do you want to switch to the model LanhGPT_Long?",
+	"crop_long_message_confirm": "Your message is too long and may cause errors. Cut down your message content."
 }

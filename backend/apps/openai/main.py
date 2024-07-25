@@ -29,6 +29,7 @@ from config import (
     ENABLE_MODEL_FILTER,
     MODEL_FILTER_LIST,
     AppConfig,
+    HATTO_LLM_BASE_URL
 )
 from typing import List, Optional, Dict, Any
 
@@ -341,6 +342,19 @@ async def proxy(path: str, request: Request, user=Depends(get_verified_user)):
             # Leaving it there generates an error with the
             # OpenAI API (Feb 2024)
             del body["num_ctx"]
+
+        messages = body.get("messages", None)
+        if messages and len(json.dumps(messages)) > 1024:
+            res = requests.post(f"{HATTO_LLM_BASE_URL}/chat/crop", json={
+                'model': body.get("model"),
+                'chat_history': messages
+            })
+            if res.status_code != 200:
+                raise HTTPException(
+                    status_code=res.status_code, detail=res.json()
+                )
+
+            body["messages"] = res.json()
 
         # Convert the modified body back to JSON
         body = json.dumps(body)

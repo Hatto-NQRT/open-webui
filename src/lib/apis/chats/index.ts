@@ -1,4 +1,4 @@
-import { WEBUI_API_BASE_URL } from '$lib/constants';
+import { HATTO_LLM_API_BASE_URL, WEBUI_API_BASE_URL } from '$lib/constants';
 import { getTimeRange } from '$lib/utils';
 
 export const createNewChat = async (token: string, chat: object) => {
@@ -653,4 +653,35 @@ export const deleteAllChats = async (token: string) => {
 	}
 
 	return res;
+};
+
+export const checkMessageToken = async (model: string, content: string) => {
+	let error = null;
+
+	const res = await fetch(`${HATTO_LLM_API_BASE_URL}/chat/token-length`, {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json',
+			authorization: `Bearer ${localStorage.token}`
+		},
+		body: JSON.stringify({
+			model, content
+		})
+	})
+		.then(async (res) => {
+			if (!res.ok) throw await res.json();
+			return res.json();
+		})
+		.catch((err) => {
+			error = err.detail;
+			console.log(err);
+			return null;
+		});
+
+	if (error) {
+		throw error;
+	}
+
+	return res.length;
 };

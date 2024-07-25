@@ -1099,5 +1099,8 @@
 		{messages}
 		{submitPrompt}
 		{stopResponse}
+		switchToLongModel={() => {
+			selectedModels = ['LanhGPT_Long']
+		}}
 	/>
 {/if}
