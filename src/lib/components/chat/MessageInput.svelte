@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { toast } from 'svelte-sonner';
 	import { onMount, tick, getContext } from 'svelte';
-	import {chatType, mobile, modelfiles, settings, showSidebar} from '$lib/stores';
+	import { chatType, mobile, modelfiles, models, settings, showSidebar } from '$lib/stores';
 	import { blobToFile, calculateSHA256, findWordIndices } from '$lib/utils';
 
 	import {
@@ -21,11 +21,14 @@
 	import Tooltip from '../common/Tooltip.svelte';
 	import XMark from '$lib/components/icons/XMark.svelte';
 	import Logo from "$lib/components/icons/Logo.svelte";
+	import { checkMessageToken } from '$lib/apis/chats';
+	import LongChatMessageWarningModal from './LongChatMessageWarningModal.svelte';
 
 	const i18n = getContext('i18n');
 
 	export let submitPrompt: Function;
 	export let stopResponse: Function;
+	export let switchToLongModel: Function;
 
 	export let autoScroll = true;
 	export let selectedModel = '';
@@ -42,6 +45,9 @@
 
 	let user = null;
 	let chatInputPlaceholder = '';
+
+	let showLongMessageWarning = false;
+	let waitingMessage = null
 
 	export let files = [];
 
@@ -327,6 +333,20 @@
 		}
 	};
 
+	const sendMessage = async (message: string, user) => {
+		const model = $models.find((model) => model.id === selectedModel.name);
+		if (message.length > model.max_model_len * 2 / 3) {
+			const length = await checkMessageToken(selectedModel.name, message);
+			if (length >= (model.max_model_len - (model.default_params?.num_predict || 0))) {
+				showLongMessageWarning = true;
+				waitingMessage = message
+				return;
+			}
+		}
+
+		submitPrompt(message, user);
+	}
+
 	onMount(() => {
 		window.setTimeout(() => chatTextAreaElement?.focus(), 0);
 
@@ -408,6 +428,17 @@
 		};
 	});
 </script>
+
+<LongChatMessageWarningModal
+	bind:show={showLongMessageWarning}
+	confirmToCrop={$models.find((model) => model.id === selectedModel.name).id === 'LanhGPT_Long'}
+	switchToLongModel={() => {
+		switchToLongModel();
+		setTimeout(() => {
+			submitPrompt(waitingMessage, user);
+		}, 500)
+	}}
+/>
 
 {#if dragged}
 	<div
@@ -771,7 +802,7 @@
 											e.preventDefault();
 										}
 										if (prompt !== '' && e.keyCode == 13 && !e.shiftKey) {
-											submitPrompt(prompt, user);
+											sendMessage(prompt, user);
 										}
 									}
 								}}
