@@ -770,7 +770,7 @@
 								controller.abort('User: Stop Response');
 							}
 
-							if ($chatType === 'chat_embedding') {
+							if ($chatType === 'chat_embedding' && responseMessage.citations) {
 								const highlightedContent = await highlightText(responseMessage.citations[0].document[0], responseMessage.content)
 								responseMessage.citations[0].document[0] = highlightedContent
 							}
