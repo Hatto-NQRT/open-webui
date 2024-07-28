@@ -123,7 +123,7 @@ ${content}`
       return `Bạn là AI dịch các bài viết lập trình đa ngôn ngữ và công thức toán lý hoá chuyên nghiệp, hãy dịch đoạn văn dưới đây sang tiếng ${options.translate_lang || 'Việt'}, bao gồm cả các câu ghi chú hoặc câu trong cú pháp in trong đoạn lập trình nếu có. Bảo lưu đầy đủ cú pháp lập trình, mã lệnh SQL và các cú pháp Latex hoặc ký hiệu toán nếu có nếu có. Không tóm tắt, không lược dịch và không được bỏ sót từ nào.\n
 ${content}`
     case 'translate_ancient':
-      return `Bạn là 1 chuyên gia dịch kinh Phật cổ. Không tóm tắt, không lược dịch mà chỉ dịch chính xác không bỏ sót bất kỳ chữ nào. Hãy dịch đoạn văn sang tiếng ${options.translate_lang || 'Việt'} theo phong cách Kinh Phật cổ.\n
+      return `Bạn là 1 chuyên gia dịch kinh Phật cổ. Không tóm tắt, không lược dịch mà chỉ dịch chính xác không bỏ sót bất kỳ chữ nào. Hãy bảo đảm tên danh nhân và địa danh phải tuyệt đối chinh xác. Nếu không biết tên tiếng ${options.translate_lang || 'Việt'} thì giữ nguyên tiếng Trung Quốc Cổ. Hãy dịch đoạn văn sang tiếng ${options.translate_lang || 'Việt'} theo phong cách Kinh Phật cổ.\n
 ${content}`
   }
   return content
@@ -270,7 +270,7 @@ export const getDefaultParams = (chatType: string) => {
         temperature: 0.0,
         top_p: 0.95,
         top_k: 20,
-        repetition_penalty: 0.35,
+        repetition_penalty: 0.15,
       }
     case 'summary':
     case 'summary_emphasis':
