@@ -46,9 +46,6 @@
 	let user = null;
 	let chatInputPlaceholder = '';
 
-	let showLongMessageWarning = false;
-	let waitingMessage = null
-
 	export let files = [];
 
 	export let fileUploadEnabled = true;
@@ -104,7 +101,7 @@
 				chatTextAreaElement?.focus();
 
 				if (prompt !== '' && $settings?.speechAutoSend === true) {
-					submitPrompt(prompt, user);
+					await sendMessage(prompt, user);
 				}
 			}
 
@@ -219,7 +216,7 @@
 						console.log('recognition ended');
 						isRecording = false;
 						if (prompt !== '' && $settings?.speechAutoSend === true) {
-							submitPrompt(prompt, user);
+							sendMessage(prompt, user);
 						}
 					};
 
@@ -334,16 +331,6 @@
 	};
 
 	const sendMessage = async (message: string, user) => {
-		const model = $models.find((model) => model.id === selectedModel.name);
-		if (message.length > model.max_model_len * 2 / 3) {
-			const length = await checkMessageToken(selectedModel.name, message);
-			if (length >= (model.max_model_len - (model.default_params?.num_predict || 0))) {
-				showLongMessageWarning = true;
-				waitingMessage = message
-				return;
-			}
-		}
-
 		submitPrompt(message, user);
 	}
 
@@ -428,17 +415,6 @@
 		};
 	});
 </script>
-
-<LongChatMessageWarningModal
-	bind:show={showLongMessageWarning}
-	confirmToCrop={$models.find((model) => model.id === selectedModel.name).id === 'LanhGPT_Long'}
-	switchToLongModel={() => {
-		switchToLongModel();
-		setTimeout(() => {
-			submitPrompt(waitingMessage, user);
-		}, 500)
-	}}
-/>
 
 {#if dragged}
 	<div
@@ -542,14 +518,14 @@
 								</div>
 							</div>
 							<div>
-								<button
-									class="flex items-center"
-									on:click={() => {
-										selectedModel = '';
-									}}
-								>
-									<XMark />
-								</button>
+<!--								<button-->
+<!--									class="flex items-center"-->
+<!--									on:click={() => {-->
+<!--										selectedModel = '';-->
+<!--									}}-->
+<!--								>-->
+<!--									<XMark />-->
+<!--								</button>-->
 							</div>
 						</div>
 					{/if}
@@ -612,7 +588,7 @@
 						dir={$settings?.chatDirection ?? 'LTR'}
 						class=" flex flex-col relative w-full rounded-3xl px-1.5 bg-gray-50 dark:bg-gray-850 dark:text-gray-100"
 						on:submit|preventDefault={() => {
-							submitPrompt(prompt, user);
+							sendMessage(prompt, user);
 						}}
 					>
 						{#if files.length > 0}
@@ -902,11 +878,6 @@
 
 										e.target.style.height = '';
 										e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px';
-									}
-
-									if (e.key === 'Escape') {
-										console.log('Escape');
-										selectedModel = '';
 									}
 								}}
 								rows="1"

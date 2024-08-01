@@ -438,7 +438,7 @@
 										{message.content}
 									</div>
 								</div>
-							{:else if message.content === ''}
+							{:else if !message.done && message.content === ''}
 								<Skeleton />
 							{:else}
 								{#each tokens as token, tokenIdx}
