@@ -808,6 +808,7 @@
 						}
 					}
 					trailingChar = subPrompt.charAt(subPrompt.length - 1);
+					if (trailingChar === '。') trailingChar = ' ';
 				} else {
 					await handleOpenAIError(null, res, model, responseMessage);
 				}
