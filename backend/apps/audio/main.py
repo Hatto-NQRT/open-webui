@@ -218,7 +218,7 @@ def transcribe(
             whisper_kwargs["local_files_only"] = False
             model = WhisperModel(**whisper_kwargs)
 
-        segments, info = model.transcribe(file_path, beam_size=5)
+        segments, info = model.transcribe(file_path, beam_size=5, language="vi")
         log.info(
             "Detected language '%s' with probability %f"
             % (info.language, info.language_probability)

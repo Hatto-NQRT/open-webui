@@ -149,6 +149,21 @@
 		await chats.set(enrichedChats);
 	};
 
+	const handleCreateNewChat = async (type) => {
+		show = false;
+		selectedChatId = null;
+		await isNewChat.set(true);
+		await chatType.set(type);
+		await goto(`/?type=${type}`);
+		const newChatButton = document.getElementById('new-chat-button');
+		setTimeout(() => {
+			newChatButton?.click();
+		}, 100);
+		if (window.innerWidth < 768) {
+			showSidebar.set(false);
+		}
+	};
+
 	const loadChat = async (id) => {
 		goto(`/c/${id}`);
 	};
@@ -232,13 +247,25 @@
 			<div
 				class="flex flex-1 justify-between rounded-xl"
 			>
-				<div class="p-2 self-center mx-1.5">
-					<Logo />
-				</div>
-				<div class=" self-center font-medium text-sm text-gray-850 dark:text-white">
-					{$i18n.t('Lành GPT')}
-				</div>
+				<a
+					href="/"
+					draggable="false"
+					class="flex flex-1"
+					on:click={async () => {
+						await handleCreateNewChat('chat')
+					}}
+				>
+					
+					<div class="p-2 self-center mx-1.5">
+						<Logo />
+					</div>
+					<div class=" self-center font-medium text-sm text-gray-850 dark:text-white">
+						{$i18n.t('Lành GPT')}
+					</div>
+
+				</a>
 				<div class="self-center ml-auto rounded-xl p-2 hover:bg-gray-100 dark:hover:bg-gray-850 transition">
+				
 					<!-- <svg
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 20 20"

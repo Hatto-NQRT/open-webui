@@ -1,3 +1,5 @@
+import traceback
+
 from fastapi import Depends, FastAPI, HTTPException, status
 from datetime import datetime, timedelta
 from typing import List, Union, Optional
@@ -27,7 +29,15 @@ router = APIRouter()
 async def get_modelfiles(
     skip: int = 0, limit: int = 50, user=Depends(get_current_user)
 ):
-    return Modelfiles.get_modelfiles(skip, limit)
+    print('11111111111111111')
+    results = []
+    try:
+        results = Modelfiles.get_modelfiles(skip, limit)
+    except Exception as e:
+        print(e)
+        traceback.print_exc()
+
+    return results
 
 
 ############################

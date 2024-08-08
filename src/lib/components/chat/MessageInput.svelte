@@ -22,11 +22,14 @@
 	import Tooltip from '../common/Tooltip.svelte';
 	import XMark from '$lib/components/icons/XMark.svelte';
 	import Logo from "$lib/components/icons/Logo.svelte";
+	import { checkMessageToken } from '$lib/apis/chats';
+	import LongChatMessageWarningModal from './LongChatMessageWarningModal.svelte';
 
 	const i18n = getContext('i18n');
 
 	export let submitPrompt: Function;
 	export let stopResponse: Function;
+	export let switchToLongModel: Function;
 
 	export let autoScroll = true;
 	export let selectedModel = '';
@@ -99,7 +102,7 @@
 				chatTextAreaElement?.focus();
 
 				if (prompt !== '' && $settings?.speechAutoSend === true) {
-					submitPrompt(prompt, user);
+					await sendMessage(prompt, user);
 				}
 			}
 
@@ -214,7 +217,7 @@
 						console.log('recognition ended');
 						isRecording = false;
 						if (prompt !== '' && $settings?.speechAutoSend === true) {
-							submitPrompt(prompt, user);
+							sendMessage(prompt, user);
 						}
 					};
 
@@ -327,6 +330,10 @@
 			toast.error(e);
 		}
 	};
+
+	const sendMessage = async (message: string, user) => {
+		submitPrompt(message, user);
+	}
 
 	onMount(() => {
 		window.setTimeout(() => chatTextAreaElement?.focus(), 0);
@@ -526,14 +533,14 @@
 								</div>
 							</div>
 							<div>
-								<button
-									class="flex items-center"
-									on:click={() => {
-										selectedModel = '';
-									}}
-								>
-									<XMark />
-								</button>
+<!--								<button-->
+<!--									class="flex items-center"-->
+<!--									on:click={() => {-->
+<!--										selectedModel = '';-->
+<!--									}}-->
+<!--								>-->
+<!--									<XMark />-->
+<!--								</button>-->
 							</div>
 						</div>
 					{/if}
@@ -597,7 +604,7 @@
 						dir={$settings?.chatDirection ?? 'LTR'}
 						class=" flex flex-col relative w-full rounded-3xl px-1.5 bg-gray-50 dark:bg-gray-850 dark:text-gray-100"
 						on:submit|preventDefault={() => {
-							submitPrompt(prompt, user);
+							sendMessage(prompt, user);
 						}}
 					>
 						{#if files.length > 0}
@@ -787,7 +794,7 @@
 											e.preventDefault();
 										}
 										if (prompt !== '' && e.keyCode == 13 && !e.shiftKey) {
-											submitPrompt(prompt, user);
+											sendMessage(prompt, user);
 										}
 									}
 								}}
@@ -887,11 +894,6 @@
 
 										e.target.style.height = '';
 										e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px';
-									}
-
-									if (e.key === 'Escape') {
-										console.log('Escape');
-										selectedModel = '';
 									}
 								}}
 								rows="1"

@@ -22,7 +22,7 @@
 
 	import { generateChatCompletion, cancelOllamaRequest } from '$lib/apis/ollama';
 	import {
-		addTagById,
+		addTagById, checkMessageToken,
 		createNewChat,
 		deleteTagById,
 		getAllChatTags,
@@ -51,6 +51,7 @@
 	import {highlightText} from "$lib/apis/documents";
 	import {queryRankedChunk} from "$lib/apis/embedding";
 	import { chunkText } from '$lib/apis/tools';
+	import LongChatMessageWarningModal from '$lib/components/chat/LongChatMessageWarningModal.svelte';
 
 	const i18n = getContext('i18n');
 
@@ -102,6 +103,11 @@
 	let prompt = '';
 	let files = [];
 	let messages = [];
+
+	let showLongMessageWarning = false;
+	let waitingSubmitPromptParams = null
+	let waitingSendPromptParams = null
+
 	let history = {
 		messages: {},
 		currentId: null
@@ -239,8 +245,35 @@
 	// Ollama functions
 	//////////////////////////
 
-	const submitPrompt = async (userPrompt, _user = null) => {
-		console.log('submitPrompt', $chatId);
+	const checkMessageLength = async (message) => {
+		const model = $models.reduce((result, model) => {
+			if (model.max_model_len < result.max_model_len) {
+				return model;
+			}
+			return result;
+		}, $models[0]);
+
+		if (message.length > model.max_model_len * 2 / 3) {
+			const length = await checkMessageToken(model.id, message);
+			if (length >= (model.max_model_len - (model.default_params?.num_predict || 0))) {
+				return false;
+			}
+		}
+
+		return true
+	}
+
+	const submitPrompt = async (userPrompt, _user = null, checkLengthRequired = true) => {
+		console.log('submitPrompt', $chatId, showLongMessageWarning, checkLengthRequired);
+
+		if (showLongMessageWarning) {
+			return
+		}
+		if (checkLengthRequired && !await checkMessageLength(prompt)) {
+			showLongMessageWarning = true
+			waitingSubmitPromptParams = [userPrompt, _user]
+			return
+		}
 
 		selectedModels = selectedModels.map((modelId) =>
 			$models.map((m) => m.id).includes(modelId) ? modelId : ''
@@ -336,7 +369,7 @@
 							score: chunk.score
 						}]
 						const prompt = getAbstractPrompt(chunk.text, userPrompt)
-						return sendPrompt(prompt, userMessageId, null, citations);
+						return sendPrompt(prompt, userMessageId, null, citations, false);
 					}))
 
 					if (!history.messages[userMessageId]?.childrenIds?.length) {
@@ -345,7 +378,7 @@
 				}
 			} else {
 				// Send prompt
-				await sendPrompt(userPrompt, userMessageId);
+				await sendPrompt(userPrompt, userMessageId, null, null, false);
 			}
 
 			if (messages.length == 2) {
@@ -357,7 +390,17 @@
 		}
 	};
 
-	const sendPrompt = async (prompt, parentId, modelId = null, citations = null) => {
+	const sendPrompt = async (prompt, parentId, modelId = null, citations = null, checkLengthRequired = true) => {
+		console.log('sendPrompt', checkLengthRequired)
+		if (showLongMessageWarning) {
+			return
+		}
+		if (checkLengthRequired && !await checkMessageLength(prompt)) {
+			showLongMessageWarning = true
+			waitingSendPromptParams = [prompt, parentId, modelId, citations]
+			return
+		}
+
 		const _chatId = JSON.parse(JSON.stringify($chatId));
 
 		await Promise.all(
@@ -819,6 +862,9 @@
 		}
 
 		responseMessage.done = true;
+		if (!responseMessage.content) {
+			responseMessage.content = "Hãy đặt ra một yêu cầu cụ thể và rõ ràng hơn."
+		}
 		messages = messages;
 
 		if ($settings.notificationEnabled && !document.hasFocus()) {
@@ -1095,4 +1141,28 @@
 	{messages}
 	{submitPrompt}
 	{stopResponse}
+	switchToLongModel={() => {
+		selectedModels = ['LanhGPT_Long']
+	}}
+/>
+
+<LongChatMessageWarningModal
+	bind:show={showLongMessageWarning}
+	confirmToCrop={$models.reduce((result, model) => {
+			if (model.max_model_len < result.max_model_len) {
+				return model;
+			}
+			return result;
+		}, $models[0]).id === 'LanhGPT_Long'}
+	switchToLongModel={() => {
+		selectedModels = ['LanhGPT_Long']
+		showLongMessageWarning = false
+		if (waitingSubmitPromptParams) {
+			submitPrompt(...waitingSubmitPromptParams, false)
+			waitingSubmitPromptParams = null
+		} else if (waitingSendPromptParams) {
+			sendPrompt(...waitingSendPromptParams, false)
+			waitingSendPromptParams = null
+		}
+	}}
 />
