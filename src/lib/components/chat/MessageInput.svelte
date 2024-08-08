@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { toast } from 'svelte-sonner';
 	import { onMount, tick, getContext } from 'svelte';
-	import { chatType, mobile, modelfiles, models, settings, showSidebar } from '$lib/stores';
+	import { chatType, mobile, modelfiles, models, settings, showSidebar, isNewChat } from '$lib/stores';
+	import { goto } from '$app/navigation';
 	import { blobToFile, calculateSHA256, findWordIndices } from '$lib/utils';
 
 	import {
@@ -414,6 +415,20 @@
 			dropZone?.removeEventListener('dragleave', onDragLeave);
 		};
 	});
+	const handleCreateNewChat = async (type) => {
+		// show = false;
+		// selectedChatId = null;
+		await isNewChat.set(true)
+		await chatType.set(type)
+		await goto(`/?type=${type}`);
+		const newChatButton = document.getElementById('new-chat-button');
+		setTimeout(() => {
+			newChatButton?.click();
+		}, 100);
+		// if (window.innerWidth < 768) {
+		// 	showSidebar.set(false)
+		// }
+	}
 </script>
 
 {#if dragged}
@@ -536,6 +551,7 @@
 		<div class="bg-white dark:bg-gray-900">
 			<div class="max-w-6xl px-2.5 md:px-16 mx-auto inset-x-0">
 				<div class=" pb-2">
+					<div class="flex ">
 					<input
 						bind:this={filesInputElement}
 						bind:files={inputFiles}
@@ -1032,7 +1048,24 @@
 							</div>
 						</div>
 					</form>
+					<div class="flex justify-end text-sm font-medium ml-2">
+						<button
+							class="{messages.length > 0
+									? 'bg-black text-white hover:bg-gray-900 dark:bg-white dark:text-black dark:hover:bg-gray-100 '
+									: 'text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled'} transition rounded-full p-1.5 self-center min-w-[10rem]"
+							type="submit"
 
+							disabled={messages.length == 0}
+							on:click={async () => {
+								await handleCreateNewChat($chatType);
+							}}
+						>
+							Tạo nhanh hội thoại
+						</button>
+					</div>
+					</div>
+
+					<!-- class=" px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-gray-100 transition rounded-lg min-w-[10rem]" -->
 					<div class="mt-1.5 text-xs text-gray-500 text-center">
 						{$i18n.t('LLMs can make mistakes. Verify important information.')}
 					</div>
