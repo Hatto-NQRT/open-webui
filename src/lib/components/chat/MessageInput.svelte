@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { toast } from 'svelte-sonner';
 	import { onMount, tick, getContext } from 'svelte';
-	import {chatType, mobile, modelfiles, settings, showSidebar, isNewChat} from '$lib/stores';
+	import { chatType, mobile, modelfiles, models, settings, showSidebar, isNewChat } from '$lib/stores';
 	import { goto } from '$app/navigation';
 	import { blobToFile, calculateSHA256, findWordIndices } from '$lib/utils';
 
